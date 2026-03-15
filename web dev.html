@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUSTY DUSTERS | cleaning services</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f5f8fa;
+            line-height: 1.5;
+        }
+
+        /* ----- navigation bar (same for all pages) ----- */
+        .navbar {
+            background-color: #1e3a5f;  /* deep navy */
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo h2 {
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+        .logo span {
+            font-weight: 700;
+            color: #ffc857;  /* warm yellow */
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+            cursor: pointer;  /* indicate clickable */
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            border-bottom-color: #ffc857;
+            color: #ffc857;
+        }
+
+        /* ----- main content area (pages) ----- */
+        .page {
+            display: none;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+            animation: fade 0.3s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        /* ----- homepage specific (slideshow) ----- */
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            height: 420px;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px -8px rgba(0,0,0,0.25);
+            background: #dbe4ec;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 2.5rem;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 5;
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, rgba(0,20,40,0.4) 0%, rgba(0,0,0,0.1) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .slide-caption {
+            position: relative;
+            z-index: 10;
+            color: white;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            font-size: 1.7rem;
+            font-weight: 600;
+            background: rgba(30, 58, 95, 0.5);
+            backdrop-filter: blur(4px);
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            border-left: 6px solid #ffc857;
+            max-width: 70%;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+            color: #1e3a5f;
+            font-size: 1.8rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            z-index: 20;
+            transition: 0.2s;
+            border: none;
+            user-select: none;
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        .prev:hover, .next:hover {
+            background-color: #ffc857;
+            color: #1e3a5f;
+            box-shadow: 0 0 12px #ffb82e;
+        }
+
+        .dots-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 12px;
+        }
+
+        .dot {
+            height: 14px;
+            width: 14px;
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .dot.active-dot, .dot:hover {
+            background-color: #ffc857;
+            border-color: white;
+            transform: scale(1.2);
+        }
+
+        .welcome {
+            text-align: center;
+            margin: 3rem 5% 2rem;
+        }
+
+        .welcome h1 {
+            font-size: 2.3rem;
+            color: #1e3a5f;
+        }
+
+        .welcome p {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            max-width: 700px;
+            margin: 0.5rem auto;
+        }
+
+        hr {
+            max-width: 300px;
+            margin: 2rem auto;
+            border: 1px solid #ffc857;
+            opacity: 0.5;
+        }
+
+        /* ----- shared page cards / styles for other pages ----- */
+        .page-title {
+            font-size: 2.4rem;
+            color: #1e3a5f;
+            margin-bottom: 1rem;
+            border-left: 8px solid #ffc857;
+            padding-left: 1.5rem;
+        }
+
+        .service-grid, .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem 1.5rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            transition: 0.2s;
+            border-bottom: 4px solid transparent;
+        }
+        .card:hover {
+            border-bottom-color: #ffc857;
+            transform: translateY(-6px);
+            box-shadow: 0 18px 30px -8px rgba(30,58,95,0.2);
+        }
+        .card i {
+            font-size: 2.4rem;
+            color: #1e3a5f;
+            margin-bottom: 1rem;
+        }
+        .card h3 {
+            margin-bottom: 0.75rem;
+            color: #1e3a5f;
+        }
+        .card p {
+            color: #2d3c4b;
+        }
+
+        .contact-details {
+            background: white;
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1.8rem 0;
+            font-size: 1.3rem;
+        }
+        .contact-item i {
+            width: 40px;
+            color: #ffc857;
+            font-size: 2rem;
+        }
+
+        .quote-form {
+            background: white;
+            border-radius: 28px;
+            padding: 2.5rem;
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 0.3rem;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 1px solid #bdcbd8;
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #ffc857;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,200,87,0.2);
+        }
+        .btn {
+            background-color: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background-color: #ffc857;
+            color: #1e3a5f;
+        }
+
+        footer {
+            background-color: #1e2b39;
+            color: #ccc;
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.95rem;
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #ffc857;
+            text-decoration: none;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .slide-caption {
+                font-size: 1.2rem;
+                padding: 0.5rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== navigation bar ===== -->
+    <nav class="navbar">
+        <div class="logo">
+            <h2><span>✨</span> DUSTY<span>DUSTERS</span></h2>
+        </div>
+        <ul class="nav-links">
+            <!-- use data-page attribute to identify which page to show -->
+            <li><a class="nav-link active" data-page="home">Home</a></li>
+            <li><a class="nav-link" data-page="services">Services</a></li>
+            <li><a class="nav-link" data-page="why">Why us</a></li>
+            <li><a class="nav-link" data-page="contact">Contact</a></li>
+            <li><a class="nav-link" data-page="quote">Quote</a></li>
+        </ul>
+    </nav>
+
+    <!-- ========== PAGES ========== -->
+    <!-- HOME page -->
+    <section id="home" class="page active-page">
+        <div class="hero">
+            <div class="slideshow-container" id="slideshow">
+                <!-- slide 1 -->
+                <div class="slide active" style="background-image: url('https://images.pexels.com/photos/4107277/pexels-photo-4107277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                    <div class="slide-caption">✨ Shiny living rooms · shining like new</div>
+                </div>
+                <!-- slide 2 -->
+                <div class="slide" style="background-image: url('https://images.pexels.com/photos/4239035/pexels-photo-4239035.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                    <div class="slide-caption">🧽 Kitchen deep clean · Spotless surfaces</div>
+                </div>
+                <!-- slide 3 -->
+                <div class="slide" style="background-image: url('https://images.pexels.com/photos/4107271/pexels-photo-4107271.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                    <div class="slide-caption">🛁 Bathroom Sanitizing · fresh & Hygienic</div>
+                </div>
+                <!-- slide 4 -->
+                <div class="slide" style="background-image: url('https://images.pexels.com/photos/4842491/pexels-photo-4842491.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                    <div class="slide-caption">💼 Office & workspace · boost productivity</div>
+                </div>
+                <!-- slide 5 -->
+                <div class="slide" style="background-image: url('https://images.pexels.com/photos/7235910/pexels-photo-7235910.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                    <div class="slide-caption">🪟 Crystal clear windows · streak‑free</div>
+                </div>
+
+                <span class="prev" id="prevBtn"><i class="fas fa-chevron-left"></i></span>
+                <span class="next" id="nextBtn"><i class="fas fa-chevron-right"></i></span>
+
+                <div class="dots-container" id="dotsContainer">
+                    <span class="dot active-dot" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                    <span class="dot" data-index="3"></span>
+                    <span class="dot" data-index="4"></span>
+                </div>
+            </div>
+        </div>
+        <div class="welcome">
+            <h1>Reliable, eco‑friendly cleaning</h1>
+            <p>Your trusted home & office cleaners – fully insured and local.</p>
+            <p><i class="fas fa-star" style="color: #ffc857;"></i> <i class="fas fa-star" style="color: #ffc857;"></i> <i class="fas fa-star" style="color: #ffc857;"></i> <i class="fas fa-star" style="color: #ffc857;"></i> <i class="fas fa-star" style="color: #ffc857;"></i> 5-star rated</p>
+        </div>
+        <hr>
+        <div style="text-align: center; padding: 0 5%">
+            <p style="color: #1e3a5f;">✦ Call today: <strong>(+27)78 242 8025</strong> or book online ✦</p>
+        </div>
+    </section>
+
+    <!-- SERVICES page -->
+    <section id="services" class="page">
+        <h2 class="page-title">Our cleaning services</h2>
+        <div class="service-grid">
+            <div class="card"><i class="fas fa-home"></i><h3>Home cleaning</h3><p>Regular or deep cleaning for every room.</p></div>
+            <div class="card"><i class="fas fa-building"></i><h3>Office cleaning</h3><p>Commercial spaces, desks, breakrooms.</p></div>
+            <div class="card"><i class="fas fa-sink"></i><h3>Kitchen sanitising</h3><p>Degrease, disinfect, leave sparkling.</p></div>
+            <div class="card"><i class="fas fa-toilet"></i><h3>Bathroom deep clean</h3><p>Mould removal, scrub & shine.</p></div>
+            <div class="card"><i class="fas fa-wind"></i><h3>Window washing</h3><p>Streak-free, inside & out.</p></div>
+            <div class="card"><i class="fas fa-broom"></i><h3>Carpet steam cleaning</h3><p>Remove stains and allergens.</p></div>
+        </div>
+    </section>
+
+    <!-- WHY US page -->
+    <section id="why" class="page">
+        <h2 class="page-title">Why choose DustyDusters?</h2>
+        <div class="why-grid">
+            <div class="card"><i class="fas fa-leaf"></i><h3>Eco-frendly</h3><p>Non-toxic, green products safe for kids & pets.</p></div>
+            <div class="card"><i class="fas fa-shield-alt"></i><h3>Fully insured</h3><p>R2 million liability coverage, bonded staff.</p></div>
+            <div class="card"><i class="fas fa-clock"></i><h3>Flexible hours</h3><p>Evenings, weekends – we adapt to you.</p></div>
+            <div class="card"><i class="fas fa-smile"></i><h3>Satisfaction guarantee</h3><p>We re-clean any spot if you're not 100% happy.</p></div>
+        </div>
+    </section>
+
+    <!-- CONTACT page (only contact info) -->
+    <section id="contact" class="page">
+        <h2 class="page-title">Contact us</h2>
+        <div class="contact-details">
+            <div class="contact-item"><i class="fas fa-phone-alt"></i> <span><strong>Phone:</strong> (+27) 242 8025</span></div>
+            <div class="contact-item"><i class="fas fa-envelope"></i> <span><strong>Email:</strong> dustydusters@gmail.com</span></div>
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i> <span><strong>Address:</strong> birbick avenue 22, KIMBERLY, SA</span></div>
+            <div class="contact-item"><i class="fas fa-clock"></i> <span><strong>Office hours:</strong> Mon-Fri 8am – 7pm, Sat 9am – 4pm</span></div>
+            <div style="margin-top: 2rem;"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.5466117314297!2d-0.127758384230584!3d51.50735097963478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2f9a9f3c8f%3A0x8f3f7a5b2c3f4d5e!2sLondon!5e0!3m2!1sen!2suk!4v1612345678901!5m2!1sen!2suk" width="100%" height="220" style="border:0; border-radius: 24px;" allowfullscreen="" loading="lazy"></iframe></div>
+        </div>
+    </section>
+
+    <!-- QUOTE page (simple form) -->
+    <section id="quote" class="page">
+        <h2 class="page-title">Request a free quote</h2>
+        <div class="quote-form">
+            <form id="dummyForm">
+                <div class="form-group">
+                    <label>Full name</label>
+                    <input type="text" placeholder="e.g. masilo mafokwane">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="masilo@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Service needed</label>
+                    <select>
+                        <option>Home cleaning</option>
+                        <option>Office cleaning</option>
+                        <option>Deep clean</option>
+                        <option>Window cleaning</option>
+                        <option>Carpet cleaning</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message / details</label>
+                    <textarea rows="3" placeholder="Tell us about your space..."></textarea>
+                </div>
+                <button type="button" class="btn" onclick="alert('Quote request sent (demo). We’ll reply shortly!')">Get quote</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 DUSTY DUSTERS — professional cleaning services.  <a href="#">Privacy</a>  |  <a href="#">Terms</a></p>
+        <p style="margin-top:0.5rem"><i class="fab fa-facebook">percymafokwane</i>  <i class="fab fa-instagram">percymafokwane</i>  <i class="fab fa-twitter">percymafokwane</i></p>
+    </footer>
+
+    <script>
+        (function() {
+            // ---------- SLIDESHOW logic (only runs if slides exist on page, but kept separate) ----------
+            const slides = document.querySelectorAll('.slide');
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            let autoInterval;
+
+            function showSlide(index) {
+                if (!slides.length) return;  // no slides (other pages)
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+                dots.forEach((dot, i) => {
+                    if (i === index) dot.classList.add('active-dot');
+                    else dot.classList.remove('active-dot');
+                });
+                currentSlide = index;
+            }
+
+            function nextSlide() { showSlide(currentSlide + 1); }
+            function prevSlide() { showSlide(currentSlide - 1); }
+
+            function startAutoCycle() {
+                if (!slides.length) return;
+                autoInterval = setInterval(() => { nextSlide(); }, 4800);
+            }
+
+            function resetAutoCycle() {
+                clearInterval(autoInterval);
+                startAutoCycle();
+            }
+
+            // attach events only if arrows exist
+            if (prev && next) {
+                prev.addEventListener('click', () => { prevSlide(); resetAutoCycle(); });
+                next.addEventListener('click', () => { nextSlide(); resetAutoCycle(); });
+            }
+            if (dots.length) {
+                dots.forEach((dot, idx) => {
+                    dot.addEventListener('click', () => { showSlide(idx); resetAutoCycle(); });
+                });
+            }
+
+            // initialise slideshow if present
+            if (slides.length) {
+                showSlide(0);
+                startAutoCycle();
+                const container = document.getElementById('slideshow');
+                if (container) {
+                    container.addEventListener('mouseenter', () => clearInterval(autoInterval));
+                    container.addEventListener('mouseleave', () => startAutoCycle());
+                }
+            }
+
+            // ---------- PAGE NAVIGATION (multi‑page) ----------
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = {
+                home: document.getElementById('home'),
+                services: document.getElementById('services'),
+                why: document.getElementById('why'),
+                contact: document.getElementById('contact'),
+                quote: document.getElementById('quote')
+            };
+
+            // function to switch active page
+            function showPage(pageId) {
+                // hide all pages
+                Object.values(pages).forEach(page => {
+                    if (page) page.classList.remove('active-page');
+                });
+                // show selected page
+                if (pages[pageId]) pages[pageId].classList.add('active-page');
+
+                // update active class in nav links
+                navLinks.forEach(link => {
+                    const linkPage = link.getAttribute('data-page');
+                    if (linkPage === pageId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                // small hack: if we switch away from home, slideshow interval keeps running, but it's harmless.
+                // if we return to home, slideshow still works. 
+                // but we may reset slideshow when home becomes active to avoid double intervals? 
+                // however slideshow interval already runs globally. It will keep rotating even if home hidden. 
+                // To be cleaner, we could stop interval when leaving home, but it's not critical. 
+                // Optional improvement: pause slideshow when home hidden.
+                if (pageId !== 'home') {
+                    // if home not visible, we can clear interval to be efficient
+                    clearInterval(autoInterval);
+                } else {
+                    // restart slideshow when home becomes visible (if slides exist)
+                    if (slides.length) {
+                        // ensure we restart only if not already running? we clear first.
+                        clearInterval(autoInterval);
+                        startAutoCycle();
+                    }
+                }
+            }
+
+            // attach click to each nav link
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();   // no hash jump
+                    const pageId = link.getAttribute('data-page');
+                    if (pageId) showPage(pageId);
+                });
+            });
+
+            // ensure home is active on page load (already active-page in html, but double-check)
+            // also set proper nav active (home already has active class)
+            // but we might override if hash etc. not needed.
+
+            // Edge: if user refreshes on a non-home page, we keep showing home because of initial active-page on home.
+            // but we want to show the correct one if we decide to use hash later. but fine.
+            // For demo, home is shown first.
+        })();
+    </script>
+</body>
+</html>
